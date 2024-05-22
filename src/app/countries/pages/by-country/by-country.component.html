@@ -1,2 +1,41 @@
 <h2>Por país</h2>
 <hr>
+
+<div class="row">
+    <div class="col">
+        <form (ngSubmit)="search()" autocomplete="off">
+            <input class="form-control" placeholder="Buscar país" type="text" name="criteria" [(ngModel)]="criteria" (ngModelChange)="resetError()">
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<div *ngIf="error" class="alert alert-danger">
+    No hay resultados para la búsqueda del país <span style="font-weight: 800;">{{ criteria }}</span>
+</div>
+
+<div class="row" *ngIf="(countries$ | async) as countries">
+    <div class="col" *ngIf="countries.length > 0">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Bandera</th>
+                    <th>Nombre</th>
+                    <th>Población</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let country of countries; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td><img src="{{ country.flags.png }}" alt="{{ country.flags.alt }}" height="16" width="24"></td>
+                    <td>{{ country.name.official }}</td>
+                    <td>{{ country.population | number:'1.0-0' }}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

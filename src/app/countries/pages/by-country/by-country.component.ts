@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { CountryService } from '../../services/country.service';
+import { Country } from '../../interfaces/Country.interface';
+import { Observable, catchError, of, tap } from 'rxjs';
 
 @Component({
   selector: 'app-by-country',
@@ -6,11 +9,35 @@ import { Component, OnInit } from '@angular/core';
   styles: [
   ]
 })
-export class ByCountryComponent implements OnInit {
+export class ByCountryComponent {
+  criteria: string = '';
+  result: any = [];
+  error: boolean = false;
+  countries$: Observable<Country[]>;
+  countries: Country[] = [];
+  constructor(private countryService: CountryService) { 
+    this.countries$ = of([]);   
+  }
 
-  constructor() { }
+  search() {
+    this.error = false;
+    console.log('a')
+    this.countries$ = this.countryService.SearchCountry(this.criteria)
+    .pipe(
+      tap((data) => {
+        console.log('b')
+        this.countries = data;
+      }),
+      catchError((err) => {
+        if (err.status === 404) {
+          this.error = true;          
+        }
+        return of([]);
+      }));
+  }
 
-  ngOnInit(): void {
+  resetError(): void {
+    this.error = false;
   }
 
 }
